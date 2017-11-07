@@ -51,6 +51,9 @@ def main_menu():
 # TRACK MENU
 def track_menu():
     print "TRACK MENU\n"
+    print "1. General Info"
+    print "2. Audio Features"
+    print "3. Audio Analysis"
     print "9. Back"
     print "0. Quit"
     choice = raw_input(" >>  ")
@@ -60,6 +63,10 @@ def track_menu():
 
 def artist_menu():
     print "ARTIST MENU\n"
+    print "1. General Info"
+    print "2. Albums"
+    print "3. Top Tracks"
+    print "4. Related Artists"
     print "9. Back"
     print "0. Quit" 
     choice = raw_input(" >>  ")
@@ -69,6 +76,8 @@ def artist_menu():
 
 def album_menu():
     print "ALBUM MENU\n"
+    print "1. General Info"
+    print "2. Album Tracks"
     print "9. Back"
     print "0. Quit" 
     choice = raw_input(" >>  ")
@@ -78,6 +87,9 @@ def album_menu():
 
 def user_menu():
     print "USER MENU\n"
+    print "1. Top Artists and Tracks"
+    print "2. Recently Played Tracks"
+    print "3. List of Playlists"
     print "9. Back"
     print "0. Quit" 
     choice = raw_input(" >>  ")
