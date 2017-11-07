@@ -42,7 +42,8 @@ def main_menu():
     print "4. User"
     print "\n0. Quit"
     choice = raw_input(" >>  ")
-    exec_menu(choice)
+    print choice
+    exec_menu(choice, '0')
  
     return
 
@@ -53,7 +54,7 @@ def track_menu():
     print "9. Back"
     print "0. Quit"
     choice = raw_input(" >>  ")
-    exec_menu(choice)
+    exec_menu(choice, '1')
     return
  
 
@@ -62,7 +63,7 @@ def artist_menu():
     print "9. Back"
     print "0. Quit" 
     choice = raw_input(" >>  ")
-    exec_menu(choice)
+    exec_menu(choice, '2')
     return
 
 
@@ -71,22 +72,24 @@ def album_menu():
     print "9. Back"
     print "0. Quit" 
     choice = raw_input(" >>  ")
-    exec_menu(choice)
+    exec_menu(choice, '3')
     return
 
 
 def user_menu():
-    print "ALBUM MENU\n"
+    print "USER MENU\n"
     print "9. Back"
     print "0. Quit" 
     choice = raw_input(" >>  ")
-    exec_menu(choice)
+    exec_menu(choice, '4')
     return
 
 
 def exec_menu(choice, menu_id):
+    print choice
     os.system('clear')
     ch = choice.lower()
+    print ch
     if ch == '':
         menu_actions['main_menu']()
     else:
@@ -100,7 +103,7 @@ def exec_menu(choice, menu_id):
 
 # Back to main menu
 def back():
-    menu_actions['main_menu']()
+    menu_actions['0']['menu']()
 
  
 # Exit program
@@ -115,6 +118,7 @@ menu_actions = {
 		'1': track_menu,
 		'2': artist_menu,
 		'3': album_menu,
+		'4': user_menu,
 		'9': back,
 		'0': exit,
 	},
