@@ -2,7 +2,7 @@
 
 import spotipy
 import sys
-import time
+import os
 import json
 
 import spotipy.oauth2 as oauth2
@@ -19,7 +19,6 @@ REDIRECT_URI='http://localhost/'
 
 	Authorization Code Flow -> private / longer
 	Clients Credentials -> Appropriate for requests that do not require access to a user’s private data. 
-
 '''
 
 credentials = oauth2.SpotifyClientCredentials(
@@ -29,11 +28,118 @@ credentials = oauth2.SpotifyClientCredentials(
 token = credentials.get_access_token()
 spotify = spotipy.Spotify(auth=token)
 
-username = 'megustatumadre'
+# Main definition - constants
+menu_actions  = {}
 
-if token:
-    playlists = spotify.user_playlists(username)
-    for playlist in playlists['items']:
-        print(playlist['name'])
-else:
-    print("Can't get token for", username)
+def main_menu():
+    os.system('clear')
+    
+    print "Welcome,\n"
+    print "Please choose the menu you want to start:"
+    print "1. Track"
+    print "2. Artist"
+    print "3. Album"
+    print "4. User"
+    print "\n0. Quit"
+    choice = raw_input(" >>  ")
+    exec_menu(choice)
+ 
+    return
+
+
+# TRACK MENU
+def track_menu():
+    print "TRACK MENU\n"
+    print "9. Back"
+    print "0. Quit"
+    choice = raw_input(" >>  ")
+    exec_menu(choice)
+    return
+ 
+
+def artist_menu():
+    print "ARTIST MENU\n"
+    print "9. Back"
+    print "0. Quit" 
+    choice = raw_input(" >>  ")
+    exec_menu(choice)
+    return
+
+
+def album_menu():
+    print "ALBUM MENU\n"
+    print "9. Back"
+    print "0. Quit" 
+    choice = raw_input(" >>  ")
+    exec_menu(choice)
+    return
+
+
+def user_menu():
+    print "ALBUM MENU\n"
+    print "9. Back"
+    print "0. Quit" 
+    choice = raw_input(" >>  ")
+    exec_menu(choice)
+    return
+
+
+def exec_menu(choice, menu_id):
+    os.system('clear')
+    ch = choice.lower()
+    if ch == '':
+        menu_actions['main_menu']()
+    else:
+        try:
+            menu_actions[menu_id][ch]()
+        except KeyError:
+            print "Invalid selection, please try again.\n"
+            menu_actions[menu_id]['menu']()
+    return
+
+
+# Back to main menu
+def back():
+    menu_actions['main_menu']()
+
+ 
+# Exit program
+def exit():
+    sys.exit()
+
+
+# Menu definition
+menu_actions = {
+	'0' : {
+		'menu': main_menu,
+		'1': track_menu,
+		'2': artist_menu,
+		'3': album_menu,
+		'9': back,
+		'0': exit,
+	},
+	'1' : {
+		'menu': track_menu,
+		'9': back,
+		'0': exit,
+	},
+	'2' : {
+		'menu': artist_menu,
+		'9': back,
+		'0': exit,
+	},
+	'3' : {
+		'menu': album_menu,
+		'9': back,
+		'0': exit,
+	},
+	'4' : {
+		'menu': user_menu,
+		'9': back,
+		'0': exit,
+	},
+}
+
+
+if __name__ == '__main__':
+	main_menu()
