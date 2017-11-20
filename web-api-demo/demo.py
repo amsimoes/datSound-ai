@@ -181,29 +181,33 @@ def user_menu():
 
 def user_top_tracks():
 	os.system('clear')
-	username = raw_input(" >> Username: ")
+	limit = 20 # default limit = 20
+	username = ''
 	scope = 'user-top-read'
 	token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
 	spotify = spotipy.Spotify(auth=token)
 	results = spotify.current_user_top_tracks()
 	pprint.pprint(results)
+
+	print(results['items'][0]['id'])
 	press_to_go_back(4)
 
 
 def user_top_artists():
 	os.system('clear')
-	username = raw_input(" >> Username: ")
+	username = ''
 	scope = 'user-top-read'
 	token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
 	spotify = spotipy.Spotify(auth=token)
 	results = spotify.current_user_top_artists()
 	pprint.pprint(results)
+	print(results['items'][0]['id'])
 	press_to_go_back(4)
 
 
 def user_recent_tracks():
 	os.system('clear')
-	username = raw_input(" >> Username: ")
+	username = ''
 	scope = 'user-read-recently-played'
 	token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
 	spotify = spotipy.Spotify(auth=token)
