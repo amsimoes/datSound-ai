@@ -105,7 +105,7 @@ def recommend_top_tracks():
 
     results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
     pprint.pprint(results)
-    
+
     press_to_go_back(1)
 
 
@@ -135,7 +135,7 @@ def recommend_top_tracks_and_artists():
 def reset_user():
     os.system('clear')
     dir_name = os.path.dirname(os.path.realpath(__file__))
-    file_list = os.listdir(dir)
+    file_list = os.listdir(dir_name)
     flag = 0
 
     for item in file_list:
