@@ -221,7 +221,7 @@ def user_recent_tracks():
     # pprint.pprint(results)
 
     for i in range(0, limit):
-        print results['items'][i]['artists'][0]['name'] + ' - ' + results['items'][i]['name']
+        print results['items'][i]['track']['artists'][0]['name'] + ' - ' + results['items'][i]['track']['name']
     press_to_go_back(4)
 
 
