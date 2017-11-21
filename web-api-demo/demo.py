@@ -14,12 +14,12 @@ CLIENT_SECRET = '9c1de0f1c11d41078d0778a9242769d9'
 REDIRECT_URI='http://localhost/'
 
 '''
-	Musica (query) -> Features / Analysis / Genre
-	Artista (query) -> Top Tracks / Top Albuns / Related Artists
-	User -> Top Tracks / Top Artists / Events near? / Followers?
+    Musica (query) -> Features / Analysis / Genre
+    Artista (query) -> Top Tracks / Top Albuns / Related Artists
+    User -> Top Tracks / Top Artists / Events near? / Followers?
 
-	Authorization Code Flow -> private / longer
-	Clients Credentials -> Appropriate for requests that do not require access to a user’s private data. 
+    Authorization Code Flow -> private / longer
+    Clients Credentials -> Appropriate for requests that do not require access to a user’s private data. 
 '''
 
 credentials = oauth2.SpotifyClientCredentials(
@@ -63,29 +63,29 @@ def track_menu():
 
 
 def track_info():
-	os.system('clear')
-	track = raw_input(" >> Track name: ")
-	results = spotify.search(q=track, limit=1)
-	pprint.pprint(results)
-	press_to_go_back(1)
+    os.system('clear')
+    track = raw_input(" >> Track name: ")
+    results = spotify.search(q=track, limit=1)
+    pprint.pprint(results)
+    press_to_go_back(1)
 
 
 def track_features():
-	os.system('clear')
-	track = raw_input(" >> Track name: ")
-	results = spotify.search(q=track, limit=1)
-	track_id = results['tracks']['items'][0]['id']
-	pprint.pprint(spotify.audio_features([track_id]))
-	press_to_go_back(1)
+    os.system('clear')
+    track = raw_input(" >> Track name: ")
+    results = spotify.search(q=track, limit=1)
+    track_id = results['tracks']['items'][0]['id']
+    pprint.pprint(spotify.audio_features([track_id]))
+    press_to_go_back(1)
 
 
 def track_analysis():
-	os.system('clear')
-	track = raw_input(" >> Track name: ")
-	results = spotify.search(q=track, limit=1)
-	track_id = results['tracks']['items'][0]['id']
-	pprint.pprint(spotify.audio_analysis(track_id))
-	press_to_go_back(1)
+    os.system('clear')
+    track = raw_input(" >> Track name: ")
+    results = spotify.search(q=track, limit=1)
+    track_id = results['tracks']['items'][0]['id']
+    pprint.pprint(spotify.audio_analysis(track_id))
+    press_to_go_back(1)
  
 
 # ARTIST MENU
@@ -103,38 +103,38 @@ def artist_menu():
 
 
 def artist_info():
-	os.system('clear')
-	artist = raw_input(" >> Artist name: ")
-	results = spotify.search(q=artist, limit=1, type='artist')
-	pprint.pprint(results)
-	press_to_go_back(2)
+    os.system('clear')
+    artist = raw_input(" >> Artist name: ")
+    results = spotify.search(q=artist, limit=1, type='artist')
+    pprint.pprint(results)
+    press_to_go_back(2)
 
 
 def artist_albums():
-	os.system('clear')
-	artist = raw_input(" >> Artist name: ")
-	results = spotify.search(q=artist, limit=1, type='artist')
-	artist_id = results['artists']['items'][0]['id']
-	pprint.pprint(spotify.artist_albums(artist_id, album_type='album'))
-	press_to_go_back(2)
+    os.system('clear')
+    artist = raw_input(" >> Artist name: ")
+    results = spotify.search(q=artist, limit=1, type='artist')
+    artist_id = results['artists']['items'][0]['id']
+    pprint.pprint(spotify.artist_albums(artist_id, album_type='album'))
+    press_to_go_back(2)
 
 
 def artist_top_tracks():
-	os.system('clear')
-	artist = raw_input(" >> Artist name: ")
-	results = spotify.search(q=artist, limit=1, type='artist')
-	artist_id = results['artists']['items'][0]['id']
-	pprint.pprint(spotify.artist_top_tracks(artist_id, country='PT'))
-	press_to_go_back(2)
+    os.system('clear')
+    artist = raw_input(" >> Artist name: ")
+    results = spotify.search(q=artist, limit=1, type='artist')
+    artist_id = results['artists']['items'][0]['id']
+    pprint.pprint(spotify.artist_top_tracks(artist_id, country='PT'))
+    press_to_go_back(2)
 
 
 def artist_related_artists():
-	os.system('clear')
-	artist = raw_input(" >> Artist name: ")
-	results = spotify.search(q=artist, limit=1, type='artist')
-	artist_id = results['artists']['items'][0]['id']
-	pprint.pprint(spotify.artist_related_artists(artist_id))
-	press_to_go_back(2)
+    os.system('clear')
+    artist = raw_input(" >> Artist name: ")
+    results = spotify.search(q=artist, limit=1, type='artist')
+    artist_id = results['artists']['items'][0]['id']
+    pprint.pprint(spotify.artist_related_artists(artist_id))
+    press_to_go_back(2)
 
 
 # ALBUM MENU
@@ -150,20 +150,20 @@ def album_menu():
 
 
 def album_info():
-	os.system('clear')
-	album = raw_input(" >> Album name: ")
-	results = spotify.search(q=album, limit=1, type='album')
-	pprint.pprint(results)
-	press_to_go_back(3)
+    os.system('clear')
+    album = raw_input(" >> Album name: ")
+    results = spotify.search(q=album, limit=1, type='album')
+    pprint.pprint(results)
+    press_to_go_back(3)
 
 
 def album_tracks():
-	os.system('clear')
-	album = raw_input(" >> Album name: ")
-	results = spotify.search(q=album, limit=1, type='album')
-	album_id = results['albums']['items'][0]['id']
-	pprint.pprint(spotify.album_tracks(album_id))
-	press_to_go_back(3)
+    os.system('clear')
+    album = raw_input(" >> Album name: ")
+    results = spotify.search(q=album, limit=1, type='album')
+    album_id = results['albums']['items'][0]['id']
+    pprint.pprint(spotify.album_tracks(album_id))
+    press_to_go_back(3)
 
 
 # USER MENU
@@ -172,48 +172,73 @@ def user_menu():
     print "1. Top Tracks"
     print "2. Top Artists"
     print "3. Recently Played Tracks"
+    print "4. Reset User"
     print "9. Back"
-    print "0. Quit" 
+    print "0. Quit\n" 
     choice = raw_input(" >>  ")
     exec_menu(choice, '4')
     return
 
 
 def user_top_tracks():
-	os.system('clear')
-	limit = 20 # default limit = 20
-	username = ''
-	scope = 'user-top-read'
-	token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
-	spotify = spotipy.Spotify(auth=token)
-	results = spotify.current_user_top_tracks()
-	pprint.pprint(results)
+    os.system('clear')
+    limit = 20 # default limit = 20
+    username = ''
+    scope = 'user-top-read'
+    token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
+    spotify = spotipy.Spotify(auth=token)
+    results = spotify.current_user_top_tracks(limit=limit)
+    # pprint.pprint(results)
 
-	print(results['items'][0]['id'])
-	press_to_go_back(4)
+    for i in range(0, limit):
+        print results['items'][i]['artists'][0]['name'] + ' - ' + results['items'][i]['name']
+    press_to_go_back(4)
 
 
 def user_top_artists():
-	os.system('clear')
-	username = ''
-	scope = 'user-top-read'
-	token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
-	spotify = spotipy.Spotify(auth=token)
-	results = spotify.current_user_top_artists()
-	pprint.pprint(results)
-	print(results['items'][0]['id'])
-	press_to_go_back(4)
+    os.system('clear')
+    limit = 20
+    username = ''
+    scope = 'user-top-read'
+    token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
+    spotify = spotipy.Spotify(auth=token)
+    results = spotify.current_user_top_artists(limit=limit)
+    # pprint.pprint(results)
+
+    for i in range(0, limit):
+        print results['items'][i]['name']
+    press_to_go_back(4)
 
 
 def user_recent_tracks():
-	os.system('clear')
-	username = ''
-	scope = 'user-read-recently-played'
-	token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
-	spotify = spotipy.Spotify(auth=token)
-	results = spotify.current_user_recently_played()
-	pprint.pprint(results)
-	press_to_go_back(4)
+    os.system('clear')
+    limit = 20
+    username = ''
+    scope = 'user-read-recently-played'
+    token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
+    spotify = spotipy.Spotify(auth=token)
+    results = spotify.current_user_recently_played(limit=limit)
+    # pprint.pprint(results)
+
+    for i in range(0, limit):
+        print results['items'][i]['artists'][0]['name'] + ' - ' + results['items'][i]['name']
+    press_to_go_back(4)
+
+
+def reset_user():
+    os.system('clear')
+    dir_name = os.path.dirname(os.path.realpath(__file__))
+    file_list = os.listdir(dir_name)
+    flag = 0
+
+    for item in file_list:
+        if item.startswith('.cache'):
+            os.remove(os.path.join(dir_name, item))
+            flag = 1
+    
+    if flag:
+        print "User(s) removed with success!"
+    press_to_go_back(4)
 
 
 def exec_menu(choice, menu_id):
@@ -231,9 +256,9 @@ def exec_menu(choice, menu_id):
 
 
 def press_to_go_back(menu_id):
-	raw_input(">> Press to go back to menu")
-	os.system('clear')
-	menu_actions[str(menu_id)]['menu']()
+    raw_input(">> Press to go back to menu")
+    os.system('clear')
+    menu_actions[str(menu_id)]['menu']()
 
 
 # Back to main menu
@@ -248,49 +273,50 @@ def exit():
 
 # Menu definition
 menu_actions = {
-	'0' : {
-		'menu': main_menu,
-		'1': track_menu,
-		'2': artist_menu,
-		'3': album_menu,
-		'4': user_menu,
-		'9': back,
-		'0': exit,
-	},
-	'1' : {
-		'menu': track_menu,
-		'1': track_info,
-		'2': track_features,
-		'3': track_analysis,
-		'9': back,
-		'0': exit,
-	},
-	'2' : {
-		'menu': artist_menu,
-		'1': artist_info,
-		'2': artist_albums,
-		'3': artist_top_tracks,
-		'4': artist_related_artists,
-		'9': back,
-		'0': exit,
-	},
-	'3' : {
-		'menu': album_menu,
-		'1': album_info,
-		'2': album_tracks,
-		'9': back,
-		'0': exit,
-	},
-	'4' : {
-		'menu': user_menu,
-		'1': user_top_tracks,
-		'2': user_top_artists,
-		'3': user_recent_tracks,
-		'9': back,
-		'0': exit,
-	},
+    '0' : {
+        'menu': main_menu,
+        '1': track_menu,
+        '2': artist_menu,
+        '3': album_menu,
+        '4': user_menu,
+        '9': back,
+        '0': exit,
+    },
+    '1' : {
+        'menu': track_menu,
+        '1': track_info,
+        '2': track_features,
+        '3': track_analysis,
+        '9': back,
+        '0': exit,
+    },
+    '2' : {
+        'menu': artist_menu,
+        '1': artist_info,
+        '2': artist_albums,
+        '3': artist_top_tracks,
+        '4': artist_related_artists,
+        '9': back,
+        '0': exit,
+    },
+    '3' : {
+        'menu': album_menu,
+        '1': album_info,
+        '2': album_tracks,
+        '9': back,
+        '0': exit,
+    },
+    '4' : {
+        'menu': user_menu,
+        '1': user_top_tracks,
+        '2': user_top_artists,
+        '3': user_recent_tracks,
+        '4': reset_user,
+        '9': back,
+        '0': exit,
+    },
 }
 
 
 if __name__ == '__main__':
-	main_menu()
+    main_menu()
