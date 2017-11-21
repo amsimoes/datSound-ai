@@ -101,10 +101,10 @@ def recommend_top_tracks():
     os.system('clear')
 
     top_tracks = user_top_tracks()
-    limit = 10
+    limit = 15
 
     results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
-    pprint.pprint(results)
+    # pprint.pprint(results)
 
     for i in range(0, limit):
         print results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
@@ -115,17 +115,17 @@ def recommend_top_artists():
     os.system('clear')
 
     top_artists = user_top_artists()
-    limit = len(top_artists)
+    limit = 15
 
     results = spotify.recommendations(seed_artists=top_artists, limit=limit)
-    pprint.pprint(results)
+    # pprint.pprint(results)
 
     for i in range(0, limit):
         print results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
     press_to_go_back(1)
 
 
-def recommend_top_tracks_and_artists(): # not working cuz limits...
+def recommend_top_tracks_and_artists(): # not working cuz 5 seeds limit...
     os.system('clear')
     
     top_tracks = user_top_tracks()
