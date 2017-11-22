@@ -155,13 +155,13 @@ def recommend_top_artists():
     top_artists = user_top_artists()
     limit = 15
 
-    # results = spotify.recommendations(seed_artists=top_artists, limit=limit)
-    results = spotify.recommendations(seed_artists=top_artists, limit=limit,
+    results = spotify.recommendations(seed_artists=top_artists, limit=limit)
+    '''results = spotify.recommendations(seed_artists=top_artists, limit=limit,
     target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
     target_energy=targets[3], target_instrumentalness=targets[4], target_key=targets[5],
     target_liveness=targets[6], target_loudness=targets[7], target_mode=targets[8],
     target_speechiness=targets[9], target_tempo=targets[10], target_time_signature=targets[11],
-    target_valence=targets[12])
+    target_valence=targets[12])'''
     # pprint.pprint(results)
 
     for i in range(0, limit):
