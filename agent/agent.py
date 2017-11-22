@@ -52,6 +52,27 @@ def recommendations_menu():
     return
 
 
+def track_features():
+    os.system('clear')
+    track = raw_input(" >> Track name: ")
+    results = spotify.search(q=track, limit=1)
+    track_id = results['tracks']['items'][0]['id']
+    pprint.pprint(spotify.audio_features([track_id]))
+    press_to_go_back(1)
+
+
+# tuneable track attributes: all got in audio_features
+def calc_avg_features(tracks):
+    avgs = [('acousticness', 0.0), ('danceability', 0.0), ('duration_ms', 0),
+        ('energy', 0.0), ('instrumentalness', 0.0), ('key', 0),
+        ('liveness', 0.0), ('loudness', 0.0), ('mode', 0),
+        ('popularity', 0), ('speechiness', 0.0), ('tempo', 0.0),
+        ('time_signature', 0), ('valence', 0.0)]
+    # for t in tracks:
+
+
+
+
 def generate_array(results, limit):
     arr = []
     for i in range (0, limit):
