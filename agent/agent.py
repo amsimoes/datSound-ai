@@ -52,6 +52,7 @@ def recommendations_menu():
     return
 
 
+# doesn't return popularity
 def track_features():
     os.system('clear')
     track = raw_input(" >> Track name: ")
@@ -63,14 +64,21 @@ def track_features():
 
 # tuneable track attributes: all got in audio_features
 def calc_avg_features(tracks):
-    avgs = [('acousticness', 0.0), ('danceability', 0.0), ('duration_ms', 0),
-        ('energy', 0.0), ('instrumentalness', 0.0), ('key', 0),
-        ('liveness', 0.0), ('loudness', 0.0), ('mode', 0),
-        ('popularity', 0), ('speechiness', 0.0), ('tempo', 0.0),
-        ('time_signature', 0), ('valence', 0.0)]
-    # for t in tracks:
-
-
+    avgs = [['acousticness', 0.0], ['danceability', 0.0], ['duration_ms', 0],
+        ['energy', 0.0], ['instrumentalness', 0.0], ['key', 0],
+        ['liveness', 0.0], ['loudness', 0.0], ['mode', 0],
+        ['speechiness', 0.0], ['tempo', 0.0], ['time_signature', 0],
+        ['valence', 0.0]]
+    for t_id in tracks:
+        results = spotify.audio_features([t_id])
+        for at in avgs:
+            if type(at[1]) == float:
+                at[1] += float(results[0][at[0]])
+            else:
+                at[1] += int(results[0][at[0]])
+    for at in avgs:
+        at[1] = at[1] / 5
+    return avgs
 
 
 def generate_array(results, limit):
@@ -124,7 +132,16 @@ def recommend_top_tracks():
     top_tracks = user_top_tracks()
     limit = 15
 
-    results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
+    track_attributes = calc_avg_features(top_tracks)
+    targets = [at[1] for at in track_attributes]
+
+    # results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
+    results = spotify.recommendations(seed_tracks=top_tracks, limit=limit,
+    target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
+    target_energy=targets[3], target_instrumentalness=targets[4], target_key=targets[5],
+    target_liveness=targets[6], target_loudness=targets[7], target_mode=targets[8],
+    target_speechiness=targets[9], target_tempo=targets[10], target_time_signature=targets[11],
+    target_valence=targets[12])
     # pprint.pprint(results)
 
     for i in range(0, limit):
@@ -138,7 +155,13 @@ def recommend_top_artists():
     top_artists = user_top_artists()
     limit = 15
 
-    results = spotify.recommendations(seed_artists=top_artists, limit=limit)
+    # results = spotify.recommendations(seed_artists=top_artists, limit=limit)
+    results = spotify.recommendations(seed_artists=top_artists, limit=limit,
+    target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
+    target_energy=targets[3], target_instrumentalness=targets[4], target_key=targets[5],
+    target_liveness=targets[6], target_loudness=targets[7], target_mode=targets[8],
+    target_speechiness=targets[9], target_tempo=targets[10], target_time_signature=targets[11],
+    target_valence=targets[12])
     # pprint.pprint(results)
 
     for i in range(0, limit):
@@ -180,11 +203,11 @@ def exec_menu(choice, menu_id):
     if ch == '':
         menu_actions[menu_id]['menu']()
     else:
-        try:
-            menu_actions[menu_id][ch]()
-        except KeyError:
+        if ch not in menu_actions[menu_id]:
             print 'Invalid selection, please try again.\n'
             menu_actions[menu_id]['menu']()
+        else:
+            menu_actions[menu_id][ch]()
     return
 
 
