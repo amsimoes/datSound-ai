@@ -39,8 +39,8 @@ def recommendations_menu():
 
     print "1. Based on User's Top Tracks"
     print "2. Based on User's Top Artists"
-    print "3. Based on User's Top Tracks and Artists"
-    print "4. Based on User's Recently Played Tracks"
+    print "3. Based on User's Recently Played Tracks"
+    print "4. Based on User's Top Tracks and Artists"
     print "5. Based on Users's Top Tracks and Recently Played Tracks"
     print "6. Based on User's Top Genres"
     print "7. Based on User's Top Tracks and Artists and Top Genres"
@@ -88,13 +88,20 @@ def generate_array(results, limit):
     return arr
 
 
+def generate_array_recent(results, limit):
+    arr = []
+    for i in range (0, limit):
+        arr.append(str(results['items'][i]['track']['id']))
+    return arr
+
+
 def user_top_tracks():
     limit = 5  # maximum = 50
-    username = ''
+    username = 'top'
     scope = 'user-top-read'
     token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
     spotify = spotipy.Spotify(auth=token)
-    results = spotify.current_user_top_tracks()
+    results = spotify.current_user_top_tracks(time_range='long_term')
     # pprint.pprint(results)
 
     return generate_array(results, limit)
@@ -103,11 +110,11 @@ def user_top_tracks():
 def user_top_artists():
     os.system('clear')
     limit = 5
-    username = ''
+    username = 'top'
     scope = 'user-top-read'
     token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
     spotify = spotipy.Spotify(auth=token)
-    results = spotify.current_user_top_artists()
+    results = spotify.current_user_top_artists(time_range='long_term')
     # pprint.pprint(results)
     
     return generate_array(results, limit)
@@ -115,15 +122,15 @@ def user_top_artists():
 
 def user_recent_tracks():
     os.system('clear')
-    limit = 20
-    username = ''
+    limit = 5
+    username = 'recent'
     scope = 'user-read-recently-played'
     token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
     spotify = spotipy.Spotify(auth=token)
     results = spotify.current_user_recently_played()
     # pprint.pprint(results)
     
-    return generate_array(results, limit)
+    return generate_array_recent(results, limit)
 
 
 def recommend_top_tracks():
@@ -145,7 +152,30 @@ def recommend_top_tracks():
     # pprint.pprint(results)
 
     for i in range(0, limit):
-        print results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
+        print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
+    press_to_go_back(1)
+
+
+def recommend_recent_tracks():
+    os.system('clear')
+
+    recent_tracks = user_recent_tracks()
+    limit = 15
+
+    track_attributes = calc_avg_features(recent_tracks)
+    targets = [at[1] for at in track_attributes]
+
+    results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
+    # results = spotify.recommendations(seed_tracks=recent_tracks, limit=limit,
+    target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
+    target_energy=targets[3], target_instrumentalness=targets[4], target_key=targets[5],
+    target_liveness=targets[6], target_loudness=targets[7], target_mode=targets[8],
+    target_speechiness=targets[9], target_tempo=targets[10], target_time_signature=targets[11],
+    target_valence=targets[12])
+    # pprint.pprint(results)
+
+    for i in range(0, limit):
+        print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
     press_to_go_back(1)
 
 
@@ -165,7 +195,7 @@ def recommend_top_artists():
     # pprint.pprint(results)
 
     for i in range(0, limit):
-        print results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
+        print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
     press_to_go_back(1)
 
 
@@ -233,7 +263,7 @@ menu_actions = {
         'menu': recommendations_menu,
         '1': recommend_top_tracks,
         '2': recommend_top_artists,
-        '3': recommend_top_tracks_and_artists,
+        '3': recommend_recent_tracks,
         '8': reset_user,
         '0': exit,
     },

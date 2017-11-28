@@ -183,11 +183,11 @@ def user_menu():
 def user_top_tracks():
     os.system('clear')
     limit = 50 # default limit = 20
-    username = ''
+    username = 'top'
     scope = 'user-top-read'
     token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
     spotify = spotipy.Spotify(auth=token)
-    results = spotify.current_user_top_tracks(limit=limit)
+    results = spotify.current_user_top_tracks(limit=limit, time_range='long_term')
     # pprint.pprint(results)
 
     for i in range(0, limit):
@@ -198,14 +198,14 @@ def user_top_tracks():
 def user_top_artists():
     os.system('clear')
     limit = 50
-    username = ''
+    username = 'top'
     scope = 'user-top-read'
     token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
     spotify = spotipy.Spotify(auth=token)
-    results = spotify.current_user_top_artists(limit=limit)
+    results = spotify.current_user_top_artists(limit=limit, time_range='long_term')
     # pprint.pprint(results)
 
-    for i in range(0, limit):
+    for i in range(0, len(results['items'])):
         print str(i+1) + ". " + results['items'][i]['name']
     press_to_go_back(4)
 
@@ -213,7 +213,7 @@ def user_top_artists():
 def user_recent_tracks():
     os.system('clear')
     limit = 20
-    username = ''
+    username = 'recent'
     scope = 'user-read-recently-played'
     token = util.prompt_for_user_token(username, scope,client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
     spotify = spotipy.Spotify(auth=token)
