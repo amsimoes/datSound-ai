@@ -222,7 +222,7 @@ def recommend_top_tracks():
 
     for i in range(0, limit):
         print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
-    press_to_go_back(1)
+    press_to_go_back(2)
 
 
 def recommend_recent_tracks():
@@ -245,7 +245,7 @@ def recommend_recent_tracks():
 
     for i in range(0, limit):
         print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
-    press_to_go_back(1)
+    press_to_go_back(2)
 
 
 def recommend_top_artists():
@@ -265,7 +265,7 @@ def recommend_top_artists():
 
     for i in range(0, limit):
         print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
-    press_to_go_back(1)
+    press_to_go_back(2)
 
 
 def recommend_top_tracks_and_artists(): # not working cuz 5 seeds limit...
@@ -277,7 +277,7 @@ def recommend_top_tracks_and_artists(): # not working cuz 5 seeds limit...
 
     results = spotify.recommendations(seed_artists=top_artists, seed_tracks=top_tracks, limit=limit)
     pprint.pprint(results)
-    press_to_go_back(1)
+    press_to_go_back(2)
 
 
 def reset_user():
@@ -332,6 +332,7 @@ menu_actions = {
         'menu': main_menu,
         '1': recommendations_menu,
         '2': events_menu,
+        '9': reset_user,
         '0': exit,
     },
     '2' : {
@@ -346,6 +347,7 @@ menu_actions = {
     '3' : {
         'menu': events_menu,
         '1': events_top_artists,
+        '8': reset_user,
         '9': back,
         '0': exit,
     },
@@ -353,5 +355,4 @@ menu_actions = {
 
 
 if __name__ == '__main__':
-    authorize_app(token)
     main_menu()
