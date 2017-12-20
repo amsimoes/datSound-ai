@@ -186,7 +186,10 @@ def calc_std_deviation(avgs,tracks):
 
     std_deviations = []
     for i in range(len(final_devs)):
-        std_deviations.append(math.sqrt(final_devs[i]))
+        if (i == 2 or i == 5 or i == 8 or i == 11):
+            std_deviations.append(int(math.sqrt(final_devs[i])))
+        else:
+            std_deviations.append(math.sqrt(final_devs[i]))
 
     return std_deviations
 
@@ -280,11 +283,20 @@ def recommend_top_tracks():
     target_energy=targets[3], target_instrumentalness=targets[4], target_key=targets[5],
     target_liveness=targets[6], target_loudness=targets[7], target_mode=targets[8],
     target_speechiness=targets[9], target_tempo=targets[10], target_time_signature=targets[11],
-    target_valence=targets[12])
+    target_valence=targets[12], min_acousticness=targets_min[0], min_danceability=targets_min[1],
+    min_energy=targets_min[3], min_instrumentalness=targets_min[4], min_key=targets_min[5],
+    min_liveness=targets_min[6], min_loudness=targets_min[7], min_mode=targets_min[8],
+    min_speechiness=targets_min[9], min_tempo=targets_min[10], min_time_signature=targets_min[11],
+    min_valence=targets_min[12], max_acousticness=targets_max[0], max_danceability=targets_max[1],
+    max_energy=targets_max[3], max_instrumentalness=targets_max[4], max_key=targets_max[5],
+    max_liveness=targets_max[6], max_loudness=targets_max[7], max_mode=targets_max[8],
+    max_speechiness=targets_max[9], max_tempo=targets_max[10], max_time_signature=targets_max[11],
+    max_valence=targets_max[12])
     # pprint.pprint(results)
 
-    for i in range(0, limit):
-        print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
+    #for i in range(0, limit):
+     #   print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
+    pprint.pprint(results)
     press_to_go_back(2)
 
 
