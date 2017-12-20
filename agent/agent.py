@@ -93,6 +93,53 @@ def events_menu():
     return
 
 
+def get_artists_ids(artists_names):
+    artists_ids = []
+
+    for i in range(0, len(artists_names)):
+        url = 'http://api.songkick.com/api/3.0/search/artists.json?apikey={a}&query={an}'.format(a=SONGKICK_API, an=artists_names[i].encode('utf-8').strip())
+        response = requests.get(url).json()
+
+        try:
+            # print response['resultsPage']['results']['artist'][0]['displayName'] + " - " + str(response['resultsPage']['results']['artist'][0]['id'])
+            artists_ids.append(str(response['resultsPage']['results']['artist'][0]['id']))
+        except:
+            pass
+        
+    return artists_ids
+
+
+def get_user_country():
+    me = spotify.me()
+    return str(me['country'])
+
+
+def get_events_in_country(artists_ids, user_country):
+    events = []
+    for i in range(0, len(artists_ids)):
+        url = 'http://api.songkick.com/api/3.0/artists/{a_id}/calendar.json?apikey={a}'.format(a=SONGKICK_API, a_id=artists_ids[i])
+        req = requests.get(url)
+        events = req.json()
+
+        try:
+            location = events['resultsPage']['results']['event'][0]["location"]['city']
+            country = location.split(" ")[-1]
+
+            if country == "Portugal" and user_country == "PT":
+                print events['resultsPage']['results']['event'][0]["displayName"]
+                events.append(str(events['resultsPage']['results']['event'][0]["displayName"]))
+        except:
+            pass
+    return events
+
+
+def get_artists_events(artists_names):
+    artists_ids = get_artists_ids(artists_names)
+    user_country = get_user_country()
+
+    return get_events_in_country(artists_ids, user_country)
+
+
 def events_top_artists():
     os.system('clear')
 
@@ -128,7 +175,43 @@ def events_top_artists():
         except:
             pass
     
-    press_to_go_back(2)
+    press_to_go_back(3)
+
+
+def add_new_top_tracks_artists(top_tracks_artists, newer_tracks):
+    for i in range(0, len(newer_tracks['items'])):
+        if newer_tracks['items'][i]['artists'][0]['name'] not in top_tracks_artists:
+            top_tracks_artists.append(newer_tracks['items'][i]['artists'][0]['name'])
+
+
+def get_tracks_artists(long_term_tracks, medium_term_tracks, short_term_tracks):
+    top_tracks_artists = []
+
+    for i in range (0, len(long_term_tracks['items'])):
+        top_tracks_artists.append(long_term_tracks['items'][i]['artists'][0]['name'])
+
+    add_new_top_tracks_artists(top_tracks_artists, medium_term_tracks)
+    add_new_top_tracks_artists(top_tracks_artists, short_term_tracks)
+    
+    return top_tracks_artists
+
+
+# Events based on the artists of the top tracks
+def events_top_tracks():
+    os.system('clear')
+
+    top_tracks_limit = 50
+    results_long = spotify.current_user_top_tracks(limit=top_tracks_limit, time_range='long_term')
+    results_medium = spotify.current_user_top_tracks(limit=top_tracks_limit, time_range='medium_term')
+    results_short = spotify.current_user_top_tracks(limit=top_tracks_limit, time_range='short_term')
+
+    top_tracks_artists = get_tracks_artists(results_long, results_medium, results_short)
+    
+    events_list = get_artists_events(top_tracks_artists)
+
+    print events_list
+
+    press_to_go_back(3)
 
 
 # doesn't return popularity
@@ -160,6 +243,7 @@ def calc_avg_features(tracks):
     for at in avgs:
         at[1] = at[1] / 5
     return avgs
+
 
 def calc_std_deviation(avgs,tracks):
     tracklist = []
@@ -193,6 +277,7 @@ def calc_std_deviation(avgs,tracks):
 
     return std_deviations
 
+
 def generate_array(results, limit):
     arr = []
     for i in range (0, limit):
@@ -207,6 +292,7 @@ def generate_array_recent(results, limit):
     return arr
 
 
+# returns user top tracks' ids
 def user_top_tracks():
     limit = 5  # maximum = 50
 
@@ -216,6 +302,7 @@ def user_top_tracks():
     return generate_array(results, limit)
 
 
+# return user top artists' ids
 def user_top_artists():
     os.system('clear')
 
@@ -276,7 +363,7 @@ def recommend_top_tracks():
     print(targets_min)
     print"t_max\n"
     print(targets_max)
-    #receber reccomends a partir de browse? e mostrar à mão?
+
     # results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
     results = spotify.recommendations(seed_tracks=top_tracks, limit=limit,
     target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
@@ -448,6 +535,7 @@ menu_actions = {
     '3' : {
         'menu': events_menu,
         '1': events_top_artists,
+        '2': events_top_tracks,
         '8': reset_user,
         '9': back,
         '0': exit,
