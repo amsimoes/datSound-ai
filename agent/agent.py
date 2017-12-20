@@ -8,6 +8,7 @@ import pprint
 import songkick
 import datetime
 import requests
+import math
 
 import spotipy.oauth2 as oauth2
 import spotipy.util as util
@@ -147,8 +148,10 @@ def calc_avg_features(tracks):
         ['liveness', 0.0], ['loudness', 0.0], ['mode', 0],
         ['speechiness', 0.0], ['tempo', 0.0], ['time_signature', 0],
         ['valence', 0.0]]
+    tracklist = []
     for t_id in tracks:
         results = spotify.audio_features([t_id])
+        tracklist.append(results)
         for at in avgs:
             if type(at[1]) == float:
                 at[1] += float(results[0][at[0]])
@@ -158,6 +161,34 @@ def calc_avg_features(tracks):
         at[1] = at[1] / 5
     return avgs
 
+def calc_std_deviation(avgs,tracks):
+    tracklist = []
+    for t_id in tracks:
+        results = spotify.audio_features([t_id])
+        tracklist.append(results)
+    #CALCULATE DEVIATION: value - avg
+    deviations = []
+    for i in range(len(tracklist)):
+        for at in avgs:
+            if(type(at[1])) == float:
+                res = float(tracklist[i][0][at[0]] - at[1])
+            else:
+                res = int(tracklist[i][0][at[0]]-at[1])
+            deviations.append(res)
+    #DEVIATIONS CALCULATED, NEED TO SQUARE and divide by number of samples
+    for i in range(len(deviations)):
+        deviations[i]*=deviations[i]
+
+    final_devs = []
+
+    for i in range(13):
+        final_devs.append((deviations[i] + deviations[i+13] + deviations[i+13*2] + deviations[i+13*3] + deviations[i+13*4])/5)
+
+    std_deviations = []
+    for i in range(len(final_devs)):
+        std_deviations.append(math.sqrt(final_devs[i]))
+
+    return std_deviations
 
 def generate_array(results, limit):
     arr = []
@@ -206,11 +237,43 @@ def recommend_top_tracks():
     os.system('clear')
 
     top_tracks = user_top_tracks()
+
+   
+    artists = []
+    tracks = spotify.tracks(top_tracks)
+    for i in range(len(top_tracks)):
+        artists.append(tracks['tracks'][i]['artists'][0]['id'])
+
+    print '\n Artist time now \n'
+
+    artist_results = spotify.artists(artists)
+ 
+    artist_main_genres = []
+    for i in range(len(artist_results['artists'])):
+        artist_main_genres.append(artist_results['artists'][i]['genres'][0])
+
+    print artist_main_genres
+
+
+    print ' \n Back to normal now \n'
+    #----------------------------------
     limit = 15
 
     track_attributes = calc_avg_features(top_tracks)
-    targets = [at[1] for at in track_attributes]
+    std_deviations = calc_std_deviation(track_attributes,top_tracks)
 
+    targets = [at[1] for at in track_attributes]
+    targets_max = [at[1] for at in track_attributes]
+    targets_min = [at[1] for at in track_attributes]
+
+    for i in range(len(targets_min)):
+        targets_min[i] = targets[i] - std_deviations[i]
+        targets_max[i] = targets[i] + std_deviations[i]
+
+    print(targets_min)
+    print"t_max\n"
+    print(targets_max)
+    #receber reccomends a partir de browse? e mostrar à mão?
     # results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
     results = spotify.recommendations(seed_tracks=top_tracks, limit=limit,
     target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
@@ -232,9 +295,23 @@ def recommend_recent_tracks():
     limit = 15
 
     track_attributes = calc_avg_features(recent_tracks)
+    std_deviations = calc_std_deviation(track_attributes,recent_tracks)
+
+    targets = [at[1] for at in track_attributes]
+    targets_max = [at[1] for at in track_attributes]
+    targets_min = [at[1] for at in track_attributes]
+
+    for i in range(len(targets_min)):
+        targets_min[i] = targets[i] - std_deviations[i]
+        targets_max[i] = targets[i] + std_deviations[i]
+
+    print(targets_min)
+    print"t_max\n"
+    print(targets_max)
+
     targets = [at[1] for at in track_attributes]
 
-    results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
+    results = spotify.recommendations(seed_tracks=recent_tracks, limit=limit)
     '''results = spotify.recommendations(seed_tracks=recent_tracks, limit=limit,
     target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
     target_energy=targets[3], target_instrumentalness=targets[4], target_key=targets[5],
@@ -242,9 +319,21 @@ def recommend_recent_tracks():
     target_speechiness=targets[9], target_tempo=targets[10], target_time_signature=targets[11],
     target_valence=targets[12])'''
     # pprint.pprint(results)
+    artists = []
 
     for i in range(0, limit):
         print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
+        artists.append(results['tracks'][i]['artists'][0]['id'])
+
+    print '\n Artist time now \n'
+
+    artist_results = spotify.artists(artists)
+ 
+    artist_main_genres = []
+    for i in range(len(artist_results['artists'])):
+        artist_main_genres.append(artist_results['artists'][i]['genres'][0])
+
+    print artist_main_genres
     press_to_go_back(2)
 
 
