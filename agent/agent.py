@@ -83,8 +83,8 @@ def events_menu():
     print "EVENTS RECOMMENDATIONS MENU\n"
 
     print "1. Based on Top Artists"
-    print "2. Based on Top Tracks"
-    print "3. Based on Recently Played Tracks"
+    print "2. Based on Top Tracks' Artists"
+    print "3. Based on Recently Played Tracks' Artists"
     print "9. Back"
     print "0. Quit\n"
 
@@ -114,68 +114,28 @@ def get_user_country():
     return str(me['country'])
 
 
-def get_events_in_country(artists_ids, user_country):
-    events = []
+def print_events_in_country(artists_ids, user_country):
     for i in range(0, len(artists_ids)):
         url = 'http://api.songkick.com/api/3.0/artists/{a_id}/calendar.json?apikey={a}'.format(a=SONGKICK_API, a_id=artists_ids[i])
-        req = requests.get(url)
-        events = req.json()
+        events = requests.get(url).json()
 
         try:
             location = events['resultsPage']['results']['event'][0]["location"]['city']
             country = location.split(" ")[-1]
 
             if country == "Portugal" and user_country == "PT":
+                # print type(events['resultsPage']['results']['event'][0]["displayName"])
                 print events['resultsPage']['results']['event'][0]["displayName"]
-                events.append(str(events['resultsPage']['results']['event'][0]["displayName"]))
+                # events.append(str(events['resultsPage']['results']['event'][0]["displayName"]))
         except:
             pass
-    return events
 
 
 def get_artists_events(artists_names):
     artists_ids = get_artists_ids(artists_names)
     user_country = get_user_country()
-
-    return get_events_in_country(artists_ids, user_country)
-
-
-def events_top_artists():
-    os.system('clear')
-
-    limit = 50
-    results = spotify.current_user_top_artists(limit=limit, time_range='long_term')
-
-    artists_names = []
-    for i in range(0, len(results['items'])):
-        print results['items'][i]['name']
-        artists_names.append(results['items'][i]['name'])
-
-    artists_ids = []
-    for i in range(0, len(artists_names)):
-        url = 'http://api.songkick.com/api/3.0/search/artists.json?apikey={a}&query={an}'.format(a=SONGKICK_API, an=artists_names[i].encode('utf-8').strip())
-        req = requests.get(url)
-        response = req.json()
-        artists_ids.append(str(response['resultsPage']['results']['artist'][0]['id']))
-        # print response['resultsPage']['results']['artist'][0]['displayName'] + " - " + str(response['resultsPage']['results']['artist'][0]['id'])
     
-    me = spotify.me()
-    user_country = str(me['country'])
-
-    for i in range(0, len(artists_ids)):
-        url = 'http://api.songkick.com/api/3.0/artists/{a_id}/calendar.json?apikey={a}'.format(a=SONGKICK_API, a_id=artists_ids[i])
-        req = requests.get(url)
-        events = req.json()
-
-        try:
-            location = events['resultsPage']['results']['event'][0]["location"]['city']
-            country = location.split(" ")[-1]
-            if country == "Portugal" and user_country == "PT":
-                print artists_names[i] + " - " + events['resultsPage']['results']['event'][0]["displayName"]
-        except:
-            pass
-    
-    press_to_go_back(3)
+    return print_events_in_country(artists_ids, user_country)
 
 
 def add_new_top_tracks_artists(top_tracks_artists, newer_tracks):
@@ -196,6 +156,39 @@ def get_tracks_artists(long_term_tracks, medium_term_tracks, short_term_tracks):
     return top_tracks_artists
 
 
+def add_new_top_artists(top_artists, newer_artists):
+    for i in range (0, len(newer_artists['items'])):
+        if newer_artists['items'][i]['name'] not in top_artists:
+            top_artists.append(newer_artists['items'][i]['name'])
+
+
+def get_all_artists(long_term_artists, medium_term_artists, short_term_artists):
+    top_artists = []
+
+    for i in range (0, len(long_term_artists['items'])):
+        top_artists.append(long_term_artists['items'][i]['name'])
+
+    add_new_top_artists(top_artists, medium_term_artists)
+    add_new_top_artists(top_artists, short_term_artists)
+
+    return top_artists
+
+
+def events_top_artists():
+    os.system('clear')
+
+    top_artists_limit = 50
+    results_long = spotify.current_user_top_artists(limit=top_artists_limit, time_range='long_term')
+    results_medium = spotify.current_user_top_artists(limit=top_artists_limit, time_range='medium_term')
+    results_short = spotify.current_user_top_artists(limit=top_artists_limit, time_range='short_term')
+
+    top_artists = get_all_artists(results_long, results_medium, results_short)
+
+    get_artists_events(top_artists)
+
+    press_to_go_back(3)
+
+
 # Events based on the artists of the top tracks
 def events_top_tracks():
     os.system('clear')
@@ -207,9 +200,26 @@ def events_top_tracks():
 
     top_tracks_artists = get_tracks_artists(results_long, results_medium, results_short)
     
-    events_list = get_artists_events(top_tracks_artists)
+    get_artists_events(top_tracks_artists)
 
-    print events_list
+    press_to_go_back(3)
+
+
+def get_recent_tracks_artists(recent_tracks):
+    recent_artists = [recent_tracks['items'][i]['track']['artists'][0]['name'] for i in range (0, len(recent_tracks['items']))]
+    return recent_artists
+
+
+def events_recent_tracks():
+    os.system('clear')
+
+    recent_tracks_limit = 50
+    results = spotify.current_user_recently_played(limit=recent_tracks_limit)
+
+    recent_tracks_artists = get_recent_tracks_artists(results)
+    # print recent_tracks_artists
+
+    get_artists_events(recent_tracks_artists)
 
     press_to_go_back(3)
 
@@ -536,6 +546,7 @@ menu_actions = {
         'menu': events_menu,
         '1': events_top_artists,
         '2': events_top_tracks,
+        '3': events_recent_tracks,
         '8': reset_user,
         '9': back,
         '0': exit,
