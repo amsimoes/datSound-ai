@@ -68,8 +68,6 @@ def recommendations_menu():
     print "3. Based on User's Recently Played Tracks"
     print "4. Based on User's Top Tracks and Artists"
     print "5. Based on Users's Top Tracks and Recently Played Tracks"
-    print "6. Based on User's Top Genres"
-    print "7. Based on User's Top Tracks and Artists and Top Genres"
     print "8. Reset User"
     print "9. Back"
     print "0. Quit\n"
@@ -93,6 +91,16 @@ def events_menu():
     exec_menu(choice, '3')
     return
 
+
+def releases_menu():
+    os.system('clear')
+    print "NEW RELEASES RECOMMENDATIONS MENU\n"
+
+    print "1. Based on Top Tracks"
+
+    choice = raw_input(">> ")
+    exec_menu(choice, '4')
+    return
 
 def get_artists_ids(artists_names):
     artists_ids = []
@@ -935,9 +943,6 @@ def recommend_top_artists():
     for i in range(0, len(top_15_id)):
         print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
 
-
-
-
     # pprint.pprint(results)
 
     #for i in range(0, limit):
@@ -1030,6 +1035,11 @@ menu_actions = {
         '9': back,
         '0': exit,
     },
+    '4': {
+        'menu': releases_menu,
+        '9': back,
+        '0': exit,
+    }
 }
 
 
