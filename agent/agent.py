@@ -116,6 +116,7 @@ def get_user_country():
 
 
 def print_events_in_country(artists_ids, user_country):
+    events_list = []
     for i in range(0, len(artists_ids)):
         url = 'http://api.songkick.com/api/3.0/artists/{a_id}/calendar.json?apikey={a}'.format(a=SONGKICK_API, a_id=artists_ids[i])
         events = requests.get(url).json()
@@ -126,10 +127,16 @@ def print_events_in_country(artists_ids, user_country):
 
             if country == "Portugal" and user_country == "PT":
                 # print type(events['resultsPage']['results']['event'][0]["displayName"])
-                print events['resultsPage']['results']['event'][0]["displayName"]
-                # events.append(str(events['resultsPage']['results']['event'][0]["displayName"]))
+                # print events['resultsPage']['results']['event'][0]["displayName"]
+                events_list.append(str(events['resultsPage']['results']['event'][0]["displayName"]))
         except:
             pass
+    if not events_list:
+        print "No events of your favorite artists near you."
+    else:
+        for e in events_list:
+            print e
+        return
 
 
 def get_artists_events(artists_names):
@@ -218,7 +225,6 @@ def events_recent_tracks():
     results = spotify.current_user_recently_played(limit=recent_tracks_limit)
 
     recent_tracks_artists = get_recent_tracks_artists(results)
-    # print recent_tracks_artists
 
     get_artists_events(recent_tracks_artists)
 
