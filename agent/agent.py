@@ -111,7 +111,6 @@ def get_artists_ids(artists_names):
         response = requests.get(url).json()
 
         try:
-            # print response['resultsPage']['results']['artist'][0]['displayName'] + " - " + str(response['resultsPage']['results']['artist'][0]['id'])
             artists_ids.append(str(response['resultsPage']['results']['artist'][0]['id']))
         except:
             pass
@@ -223,7 +222,10 @@ def events_top_tracks():
 
 
 def get_recent_tracks_artists(recent_tracks):
-    recent_artists = [recent_tracks['items'][i]['track']['artists'][0]['name'] for i in range (0, len(recent_tracks['items']))]
+    recent_artists = []
+    for i in range (0, len(recent_tracks['items'])):
+        if(recent_tracks['items'][i]['track']['artists'][0]['name'] not in recent_artists):
+            recent_artists.append(recent_tracks['items'][i]['track']['artists'][0]['name'])
     return recent_artists
 
 
@@ -354,25 +356,7 @@ def recommend_top_tracks():
 
     top_tracks = user_top_tracks()
 
-   
-    artists = []
     tracks = spotify.tracks(top_tracks)
-    #for i in range(len(top_tracks)):
-    #    artists.append(tracks['tracks'][i]['artists'][0]['id'])
-
-    #print '\n Artist time now \n'
-
-    #artist_results = spotify.artists(artists)
- 
-    #artist_main_genres = []
-    #for i in range(len(artist_results['artists'])):
-    #    artist_main_genres.append(artist_results['artists'][i]['genres'][0])
-
-    #print artist_main_genres
-
-
-    #print ' \n Back to normal now \n'
-    #----------------------------------
     limit = 33
 
     track_attributes = calc_avg_features(top_tracks)
@@ -386,11 +370,7 @@ def recommend_top_tracks():
         targets_min[i] = targets[i] - std_deviations[i]
         targets_max[i] = targets[i] + std_deviations[i]
 
-    print(targets_min)
-    print"t_max\n"
-    print(targets_max)
 
-    # results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
     target_results = spotify.recommendations(seed_tracks=top_tracks, limit=limit,
     target_acousticness=targets[4], target_danceability=targets[7],
     target_energy=targets[0], target_instrumentalness=targets[5], target_key=targets[8],
@@ -411,35 +391,27 @@ def recommend_top_tracks():
     max_liveness=targets_max[1], max_loudness=targets_max[10], max_mode=targets_max[12],
     max_speechiness=targets_max[3], max_tempo=targets_max[2], max_time_signature=targets_max[6],
     max_valence=targets_max[11])
-    # pprint.pprint(results)
 
     target_vector=[]
     min_vector=[]
     max_vector=[]
 
-    print(len(target_results['tracks']))
 
     for i in range(0, len(target_results['tracks'])):
-        #print str(i+1) + ". " + target_results['tracks'][i]['artists'][0]['name'] + " - " + target_results['tracks'][i]['name']
         target_vector.append(target_results['tracks'][i]['id'])
 
     for i in range(0, len(min_results['tracks'])):
-        #print str(i+1) + ". " + min_results['tracks'][i]['artists'][0]['name'] + " - " + min_results['tracks'][i]['name']
         min_vector.append(min_results['tracks'][i]['id'])
 
     for i in range(0, len(max_results['tracks'])):
-        #print str(i+1) + ". " + max_results['tracks'][i]['artists'][0]['name'] + " - " + max_results['tracks'][i]['name']
         max_vector.append(max_results['tracks'][i]['id'])
 
     target_features = spotify.audio_features(target_vector)
     min_features = spotify.audio_features(min_vector)
     max_features = spotify.audio_features(max_vector)
 
-
     top_15_id = []
     top_15_similarity = []
-    #queremos as tracks que batam mais parecido com os targets
-
 
     for song in target_features:
         j = 0
@@ -466,7 +438,6 @@ def recommend_top_tracks():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
 
     for song in min_features:
         j = 0
@@ -495,7 +466,6 @@ def recommend_top_tracks():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
 
     for song in max_features:
         j = 0
@@ -524,20 +494,13 @@ def recommend_top_tracks():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
         
-    print(top_15_id)
-
-    print(top_15_similarity)
 
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
         print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
 
-
-
-    #pprint.pprint(results)
     press_to_go_back(2)
 
 def recommend_recent_tracks():
@@ -557,7 +520,6 @@ def recommend_recent_tracks():
         targets_min[i] = targets[i] - std_deviations[i]
         targets_max[i] = targets[i] + std_deviations[i]
 
-    print(targets)
     target_results = spotify.recommendations(seed_tracks=recent_tracks, limit=limit,
     target_acousticness=targets[4], target_danceability=targets[7],
     target_energy=targets[0], target_instrumentalness=targets[5], target_key=targets[8],
@@ -578,24 +540,18 @@ def recommend_recent_tracks():
     max_liveness=targets_max[1], max_loudness=targets_max[10], max_mode=targets_max[12],
     max_speechiness=targets_max[3], max_tempo=targets_max[2], max_time_signature=targets_max[6],
     max_valence=targets_max[11])
-    # pprint.pprint(results)
 
     target_vector=[]
     min_vector=[]
     max_vector=[]
 
-    print(len(target_results['tracks']))
-
     for i in range(0, len(target_results['tracks'])):
-        #print str(i+1) + ". " + target_results['tracks'][i]['artists'][0]['name'] + " - " + target_results['tracks'][i]['name']
         target_vector.append(target_results['tracks'][i]['id'])
 
     for i in range(0, len(min_results['tracks'])):
-        #print str(i+1) + ". " + min_results['tracks'][i]['artists'][0]['name'] + " - " + min_results['tracks'][i]['name']
         min_vector.append(min_results['tracks'][i]['id'])
 
     for i in range(0, len(max_results['tracks'])):
-        #print str(i+1) + ". " + max_results['tracks'][i]['artists'][0]['name'] + " - " + max_results['tracks'][i]['name']
         max_vector.append(max_results['tracks'][i]['id'])
 
     target_features = spotify.audio_features(target_vector)
@@ -605,7 +561,6 @@ def recommend_recent_tracks():
 
     top_15_id = []
     top_15_similarity = []
-    #queremos as tracks que batam mais parecido com os targets
 
 
     for song in target_features:
@@ -633,7 +588,6 @@ def recommend_recent_tracks():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
 
     for song in min_features:
         j = 0
@@ -662,7 +616,6 @@ def recommend_recent_tracks():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
 
     for song in max_features:
         j = 0
@@ -691,12 +644,7 @@ def recommend_recent_tracks():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
         
-    print(top_15_id)
-
-    print(top_15_similarity)
-
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
@@ -717,12 +665,6 @@ def recommend_top_artists():
     top_artists_tracks_5 = spotify.artist_top_tracks(top_artists[4])
 
     results_artists = spotify.recommendations(seed_artists=top_artists, limit=limit)
-    '''results = spotify.recommendations(seed_artists=top_artists, limit=limit,
-    target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
-    target_energy=targets[3], target_instrumentalness=targets[4], target_key=targets[5],
-    target_liveness=targets[6], target_loudness=targets[7], target_mode=targets[8],
-    target_speechiness=targets[9], target_tempo=targets[10], target_time_signature=targets[11],
-    target_valence=targets[12])'''
 
     track_ids = []
     for i in range(0, len(top_artists_tracks_1['tracks'])):
@@ -781,15 +723,12 @@ def recommend_top_artists():
 
 
     for i in range(0, len(target_results['tracks'])):
-        #print str(i+1) + ". " + target_results['tracks'][i]['artists'][0]['name'] + " - " + target_results['tracks'][i]['name']
         target_vector.append(target_results['tracks'][i]['id'])
 
     for i in range(0, len(min_results['tracks'])):
-        #print str(i+1) + ". " + min_results['tracks'][i]['artists'][0]['name'] + " - " + min_results['tracks'][i]['name']
         min_vector.append(min_results['tracks'][i]['id'])
 
     for i in range(0, len(max_results['tracks'])):
-        #print str(i+1) + ". " + max_results['tracks'][i]['artists'][0]['name'] + " - " + max_results['tracks'][i]['name']
         max_vector.append(max_results['tracks'][i]['id'])
 
     for i in range(0, len(results_artists['tracks'])):
@@ -803,7 +742,6 @@ def recommend_top_artists():
 
     top_15_id = []
     top_15_similarity = []
-    #queremos as tracks que batam mais parecido com os targets
 
     for song in artist_features:
         j = 0
@@ -835,7 +773,6 @@ def recommend_top_artists():
                             index = top_15_similarity.index(min(top_15_similarity))
                             top_15_similarity[index] = similarity
                             top_15_id[index] = (song_id)
-                            #print(top_15_similarity)
 
     for song in target_features:
         j = 0
@@ -868,7 +805,6 @@ def recommend_top_artists():
                             index = top_15_similarity.index(min(top_15_similarity))
                             top_15_similarity[index] = similarity
                             top_15_id[index] = (song_id)
-                            #print(top_15_similarity)
 
     for song in min_features:
         j = 0
@@ -898,7 +834,6 @@ def recommend_top_artists():
                             index = top_15_similarity.index(min(top_15_similarity))
                             top_15_similarity[index] = similarity
                             top_15_id[index] = (song_id)
-                            #print(top_15_similarity)
 
     for song in max_features:
         j = 0
@@ -930,21 +865,13 @@ def recommend_top_artists():
                             index = top_15_similarity.index(min(top_15_similarity))
                             top_15_similarity[index] = similarity
                             top_15_id[index] = (song_id)
-                            #print(top_15_similarity)
+                            
         
-    #print(top_15_id)
-
-    print(top_15_similarity)
-
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
         print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
 
-    # pprint.pprint(results)
-
-    #for i in range(0, limit):
-     #   print str(i+1) + ". " + results['tracks'][i]['artists'][0]['name'] + " - " + results['tracks'][i]['name']
     press_to_go_back(2)
 
 def recommend_top_tracks_top_artists():
@@ -967,11 +894,6 @@ def recommend_top_tracks_top_artists():
         targets_min[i] = targets[i] - std_deviations[i]
         targets_max[i] = targets[i] + std_deviations[i]
 
-    print(targets_min)
-    print"t_max\n"
-    print(targets_max)
-
-    # results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
     target_results = spotify.recommendations(seed_tracks=top_tracks, limit=limit,
     target_acousticness=targets[4], target_danceability=targets[7],
     target_energy=targets[0], target_instrumentalness=targets[5], target_key=targets[8],
@@ -992,24 +914,18 @@ def recommend_top_tracks_top_artists():
     max_liveness=targets_max[1], max_loudness=targets_max[10], max_mode=targets_max[12],
     max_speechiness=targets_max[3], max_tempo=targets_max[2], max_time_signature=targets_max[6],
     max_valence=targets_max[11])
-    # pprint.pprint(results)
 
     target_vector=[]
     min_vector=[]
     max_vector=[]
 
-    print(len(target_results['tracks']))
-
     for i in range(0, len(target_results['tracks'])):
-        #print str(i+1) + ". " + target_results['tracks'][i]['artists'][0]['name'] + " - " + target_results['tracks'][i]['name']
         target_vector.append(target_results['tracks'][i]['id'])
 
     for i in range(0, len(min_results['tracks'])):
-        #print str(i+1) + ". " + min_results['tracks'][i]['artists'][0]['name'] + " - " + min_results['tracks'][i]['name']
         min_vector.append(min_results['tracks'][i]['id'])
 
     for i in range(0, len(max_results['tracks'])):
-        #print str(i+1) + ". " + max_results['tracks'][i]['artists'][0]['name'] + " - " + max_results['tracks'][i]['name']
         max_vector.append(max_results['tracks'][i]['id'])
 
     target_features = spotify.audio_features(target_vector)
@@ -1019,7 +935,6 @@ def recommend_top_tracks_top_artists():
 
     top_15_id = []
     top_15_similarity = []
-    #queremos as tracks que batam mais parecido com os targets
 
 
     for song in target_features:
@@ -1047,7 +962,7 @@ def recommend_top_tracks_top_artists():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
+                    
 
     for song in min_features:
         j = 0
@@ -1076,7 +991,7 @@ def recommend_top_tracks_top_artists():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
+                    
 
     for song in max_features:
         j = 0
@@ -1105,7 +1020,7 @@ def recommend_top_tracks_top_artists():
                     index = top_15_similarity.index(min(top_15_similarity))
                     top_15_similarity[index] = similarity
                     top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
+                    
         
     ################################################################# CALC NOW FOR TOP ARTISTS
 
@@ -1116,12 +1031,7 @@ def recommend_top_tracks_top_artists():
     top_artists_tracks_5 = spotify.artist_top_tracks(top_artists[4])
 
     results_artists = spotify.recommendations(seed_artists=top_artists, limit=limit)
-    '''results = spotify.recommendations(seed_artists=top_artists, limit=limit,
-    target_acousticness=targets[0], target_danceability=targets[1], target_duration_ms=targets[2],
-    target_energy=targets[3], target_instrumentalness=targets[4], target_key=targets[5],
-    target_liveness=targets[6], target_loudness=targets[7], target_mode=targets[8],
-    target_speechiness=targets[9], target_tempo=targets[10], target_time_signature=targets[11],
-    target_valence=targets[12])'''
+    
 
     track_ids = []
     for i in range(0, len(top_artists_tracks_1['tracks'])):
@@ -1180,15 +1090,12 @@ def recommend_top_tracks_top_artists():
 
 
     for i in range(0, len(target_results['tracks'])):
-        #print str(i+1) + ". " + target_results['tracks'][i]['artists'][0]['name'] + " - " + target_results['tracks'][i]['name']
         target_vector.append(target_results['tracks'][i]['id'])
 
     for i in range(0, len(min_results['tracks'])):
-        #print str(i+1) + ". " + min_results['tracks'][i]['artists'][0]['name'] + " - " + min_results['tracks'][i]['name']
         min_vector.append(min_results['tracks'][i]['id'])
 
     for i in range(0, len(max_results['tracks'])):
-        #print str(i+1) + ". " + max_results['tracks'][i]['artists'][0]['name'] + " - " + max_results['tracks'][i]['name']
         max_vector.append(max_results['tracks'][i]['id'])
 
     for i in range(0, len(results_artists['tracks'])):
@@ -1231,7 +1138,7 @@ def recommend_top_tracks_top_artists():
                             index = top_15_similarity.index(min(top_15_similarity))
                             top_15_similarity[index] = similarity
                             top_15_id[index] = (song_id)
-                            #print(top_15_similarity)
+                           
 
     for song in target_features:
         j = 0
@@ -1264,7 +1171,7 @@ def recommend_top_tracks_top_artists():
                             index = top_15_similarity.index(min(top_15_similarity))
                             top_15_similarity[index] = similarity
                             top_15_id[index] = (song_id)
-                            #print(top_15_similarity)
+                           
 
     for song in min_features:
         j = 0
@@ -1294,7 +1201,7 @@ def recommend_top_tracks_top_artists():
                             index = top_15_similarity.index(min(top_15_similarity))
                             top_15_similarity[index] = similarity
                             top_15_id[index] = (song_id)
-                            #print(top_15_similarity)
+                            
 
     for song in max_features:
         j = 0
@@ -1326,12 +1233,6 @@ def recommend_top_tracks_top_artists():
                             index = top_15_similarity.index(min(top_15_similarity))
                             top_15_similarity[index] = similarity
                             top_15_id[index] = (song_id)
-                            #print(top_15_similarity)
-        
-    #print(top_15_id)
-
-    #results = spotify.recommendations(seed_artists=top_artists, seed_tracks=top_tracks, limit=limit)
-    #pprint.pprint(results)
     
     top_15_tracks = spotify.tracks(top_15_id)
 
@@ -1345,21 +1246,6 @@ def recommend_top_tracks_recent_tracks():
    
     artists = []
     tracks = spotify.tracks(top_tracks)
-    #for i in range(len(top_tracks)):
-    #    artists.append(tracks['tracks'][i]['artists'][0]['id'])
-
-    #print '\n Artist time now \n'
-
-    #artist_results = spotify.artists(artists)
- 
-    #artist_main_genres = []
-    #for i in range(len(artist_results['artists'])):
-    #    artist_main_genres.append(artist_results['artists'][i]['genres'][0])
-
-    #print artist_main_genres
-
-
-    #print ' \n Back to normal now \n'
     #----------------------------------
     limit = 33
 
@@ -1374,11 +1260,6 @@ def recommend_top_tracks_recent_tracks():
         targets_min[i] = targets[i] - std_deviations[i]
         targets_max[i] = targets[i] + std_deviations[i]
 
-    print(targets_min)
-    print"t_max\n"
-    print(targets_max)
-
-    # results = spotify.recommendations(seed_tracks=top_tracks, limit=limit)
     target_results = spotify.recommendations(seed_tracks=top_tracks, limit=limit,
     target_acousticness=targets[4], target_danceability=targets[7],
     target_energy=targets[0], target_instrumentalness=targets[5], target_key=targets[8],
@@ -1399,35 +1280,31 @@ def recommend_top_tracks_recent_tracks():
     max_liveness=targets_max[1], max_loudness=targets_max[10], max_mode=targets_max[12],
     max_speechiness=targets_max[3], max_tempo=targets_max[2], max_time_signature=targets_max[6],
     max_valence=targets_max[11])
-    # pprint.pprint(results)
 
     target_vector=[]
     min_vector=[]
     max_vector=[]
-
-    print(len(target_results['tracks']))
-
+    
     for i in range(0, len(target_results['tracks'])):
-        #print str(i+1) + ". " + target_results['tracks'][i]['artists'][0]['name'] + " - " + target_results['tracks'][i]['name']
         target_vector.append(target_results['tracks'][i]['id'])
 
+
     for i in range(0, len(min_results['tracks'])):
-        #print str(i+1) + ". " + min_results['tracks'][i]['artists'][0]['name'] + " - " + min_results['tracks'][i]['name']
         min_vector.append(min_results['tracks'][i]['id'])
 
     for i in range(0, len(max_results['tracks'])):
-        #print str(i+1) + ". " + max_results['tracks'][i]['artists'][0]['name'] + " - " + max_results['tracks'][i]['name']
         max_vector.append(max_results['tracks'][i]['id'])
+    
 
+    
     target_features = spotify.audio_features(target_vector)
+    
     min_features = spotify.audio_features(min_vector)
+    
     max_features = spotify.audio_features(max_vector)
-
-
+    
     top_15_id = []
     top_15_similarity = []
-    #queremos as tracks que batam mais parecido com os targets
-
 
     for song in target_features:
         j = 0
@@ -1435,101 +1312,99 @@ def recommend_top_tracks_recent_tracks():
         at_sum = 0
         den_1 = 0
         den_2 = 0
-        for at,value in song.items():
-            if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
-                #somar atributos todos
-                at_sum += value * targets[j]
-                den_1 += value*value
-                den_2 += targets[j] * targets[j]
-                j+=1
-        song_id = song.get('id')
-        similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
+        if song != None:
+            for at,value in song.items():
+                if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
+                    #somar atributos todos
+                    at_sum += value * targets[j]
+                    den_1 += value*value
+                    den_2 += targets[j] * targets[j]
+                    j+=1
+            song_id = song.get('id')
+            similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
 
-        if (len(top_15_id)<15):
-            top_15_id.append(song_id)
-            top_15_similarity.append(similarity)
-        else:
-            if similarity > min(top_15_similarity):
-                if(song_id not in top_15_id):
-                    index = top_15_similarity.index(min(top_15_similarity))
-                    top_15_similarity[index] = similarity
-                    top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
-
+            if (len(top_15_id)<15):
+                top_15_id.append(song_id)
+                top_15_similarity.append(similarity)
+            else:
+                if similarity > min(top_15_similarity):
+                    if(song_id not in top_15_id):
+                        index = top_15_similarity.index(min(top_15_similarity))
+                        top_15_similarity[index] = similarity
+                        top_15_id[index] = (song_id)
+    
+    
     for song in min_features:
         j = 0
         at_sum = 0
         similarity = 0
         den_1 = 0
         den_2 = 0
-        for at,value in song.items():
-            if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
-                #somar atributos todos
-                at_sum += value * targets[j]
-                den_1 += value*value
-                den_2 += targets[j] * targets[j]
-                j+=1
+        if song != None:
+            for at,value in song.items():
+                if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
+                    #somar atributos todos
+                    at_sum += value * targets[j]
+                    den_1 += value*value
+                    den_2 += targets[j] * targets[j]
+                    j+=1
 
-        similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
+            similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
 
-        song_id = song.get('id')
+            song_id = song.get('id')
 
-        if (len(top_15_id)<15):
-            top_15_id.append(song_id)
-            top_15_similarity.append(similarity)
-        else:
-            if similarity > min(top_15_similarity):
-                if(song_id not in top_15_id):
-                    index = top_15_similarity.index(min(top_15_similarity))
-                    top_15_similarity[index] = similarity
-                    top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
-
+            if (len(top_15_id)<15):
+                top_15_id.append(song_id)
+                top_15_similarity.append(similarity)
+            else:
+                if similarity > min(top_15_similarity):
+                    if(song_id not in top_15_id):
+                        index = top_15_similarity.index(min(top_15_similarity))
+                        top_15_similarity[index] = similarity
+                        top_15_id[index] = (song_id)
+    
     for song in max_features:
         j = 0
         at_sum = 0
         similarity = 0
         den_1 = 0
         den_2 = 0
-        for at,value in song.items():
-            if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
-                #somar atributos todos
-                at_sum += value * targets[j]
-                den_1 += value*value
-                den_2 += targets[j] * targets[j]
-                j+=1
+        if song != None:
+            for at,value in song.items():
+                if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
+                    #somar atributos todos
+                    at_sum += value * targets[j]
+                    den_1 += value*value
+                    den_2 += targets[j] * targets[j]
+                    j+=1
 
-        similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
+            similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
 
-        song_id = song.get('id')
+            song_id = song.get('id')
 
-        if (len(top_15_id)<15):
-            top_15_id.append(song_id)
-            top_15_similarity.append(similarity)
-        else:
-            if similarity > min(top_15_similarity):
-                if(song_id not in top_15_id):
-                    index = top_15_similarity.index(min(top_15_similarity))
-                    top_15_similarity[index] = similarity
-                    top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
-        
+            if (len(top_15_id)<15):
+                top_15_id.append(song_id)
+                top_15_similarity.append(similarity)
+            else:
+                if similarity > min(top_15_similarity):
+                    if(song_id not in top_15_id):
+                        index = top_15_similarity.index(min(top_15_similarity))
+                        top_15_similarity[index] = similarity
+                        top_15_id[index] = (song_id)
     
     recent_tracks = user_recent_tracks()
     limit = 15
-
     track_attributes = calc_avg_features(recent_tracks)
     std_deviations = calc_std_deviation(track_attributes,recent_tracks)
 
     targets = [at[1] for at in track_attributes]
     targets_max = [at[1] for at in track_attributes]
     targets_min = [at[1] for at in track_attributes]
-
+    
     for i in range(len(targets_min)):
         targets_min[i] = targets[i] - std_deviations[i]
         targets_max[i] = targets[i] + std_deviations[i]
-
-    print(targets)
+   
     target_results = spotify.recommendations(seed_tracks=recent_tracks, limit=limit,
     target_acousticness=targets[4], target_danceability=targets[7],
     target_energy=targets[0], target_instrumentalness=targets[5], target_key=targets[8],
@@ -1550,118 +1425,114 @@ def recommend_top_tracks_recent_tracks():
     max_liveness=targets_max[1], max_loudness=targets_max[10], max_mode=targets_max[12],
     max_speechiness=targets_max[3], max_tempo=targets_max[2], max_time_signature=targets_max[6],
     max_valence=targets_max[11])
-    # pprint.pprint(results)
-
+   
     target_vector=[]
     min_vector=[]
     max_vector=[]
 
-    print(len(target_results['tracks']))
-
     for i in range(0, len(target_results['tracks'])):
-        #print str(i+1) + ". " + target_results['tracks'][i]['artists'][0]['name'] + " - " + target_results['tracks'][i]['name']
         target_vector.append(target_results['tracks'][i]['id'])
 
     for i in range(0, len(min_results['tracks'])):
-        #print str(i+1) + ". " + min_results['tracks'][i]['artists'][0]['name'] + " - " + min_results['tracks'][i]['name']
         min_vector.append(min_results['tracks'][i]['id'])
 
     for i in range(0, len(max_results['tracks'])):
-        #print str(i+1) + ". " + max_results['tracks'][i]['artists'][0]['name'] + " - " + max_results['tracks'][i]['name']
         max_vector.append(max_results['tracks'][i]['id'])
 
     target_features = spotify.audio_features(target_vector)
     min_features = spotify.audio_features(min_vector)
     max_features = spotify.audio_features(max_vector)
-
+    
     for song in target_features:
         j = 0
         similarity = 0
         at_sum = 0
         den_1 = 0
         den_2 = 0
-        for at,value in song.items():
-            if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
-                #somar atributos todos
-                at_sum += value * targets[j]
-                den_1 += value*value
-                den_2 += targets[j] * targets[j]
-                j+=1
-        song_id = song.get('id')
-        similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
+        if song != None:
+            for at,value in song.items():
+                if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
+                    #somar atributos todos
+                    at_sum += value * targets[j]
+                    den_1 += value*value
+                    den_2 += targets[j] * targets[j]
+                    j+=1
+            song_id = song.get('id')
+            similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
 
-        if (len(top_15_id)<15):
-            top_15_id.append(song_id)
-            top_15_similarity.append(similarity)
-        else:
-            if similarity > min(top_15_similarity):
-                if(song_id not in top_15_id):
-                    index = top_15_similarity.index(min(top_15_similarity))
-                    top_15_similarity[index] = similarity
-                    top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
-
+            if (len(top_15_id)<15):
+                top_15_id.append(song_id)
+                top_15_similarity.append(similarity)
+            else:
+                if similarity > min(top_15_similarity):
+                    if(song_id not in top_15_id):
+                        index = top_15_similarity.index(min(top_15_similarity))
+                        top_15_similarity[index] = similarity
+                        top_15_id[index] = (song_id)
+    
     for song in min_features:
         j = 0
         at_sum = 0
         similarity = 0
         den_1 = 0
         den_2 = 0
-        for at,value in song.items():
-            if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
-                #somar atributos todos
-                at_sum += value * targets[j]
-                den_1 += value*value
-                den_2 += targets[j] * targets[j]
-                j+=1
+        if song != None:
+            for at,value in song.items():
+                if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
+                    #somar atributos todos
+                    at_sum += value * targets[j]
+                    den_1 += value*value
+                    den_2 += targets[j] * targets[j]
+                    j+=1
 
-        similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
+            similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
 
-        song_id = song.get('id')
+            song_id = song.get('id')
 
-        if (len(top_15_id)<15):
-            top_15_id.append(song_id)
-            top_15_similarity.append(similarity)
-        else:
-            if similarity > min(top_15_similarity):
-                if(song_id not in top_15_id):
-                    index = top_15_similarity.index(min(top_15_similarity))
-                    top_15_similarity[index] = similarity
-                    top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
-
+            if (len(top_15_id)<15):
+                top_15_id.append(song_id)
+                top_15_similarity.append(similarity)
+            else:
+                if similarity > min(top_15_similarity):
+                    if(song_id not in top_15_id):
+                        index = top_15_similarity.index(min(top_15_similarity))
+                        top_15_similarity[index] = similarity
+                        top_15_id[index] = (song_id)
+    
     for song in max_features:
         j = 0
         at_sum = 0
         similarity = 0
         den_1 = 0
         den_2 = 0
-        for at,value in song.items():
-            if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
-                #somar atributos todos
-                at_sum += value * targets[j]
-                den_1 += value*value
-                den_2 += targets[j] * targets[j]
-                j+=1
+        if song != None:
+            for at,value in song.items():
+                if(at!='track_href' and at!='analysis_url' and at!='uri' and at!='type' and at!='id' and at!='mode'):
+                    #somar atributos todos
+                    at_sum += value * targets[j]
+                    den_1 += value*value
+                    den_2 += targets[j] * targets[j]
+                    j+=1
 
-        similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
+            similarity = at_sum/(math.sqrt(den_1)*math.sqrt(den_2))
 
-        song_id = song.get('id')
+            song_id = song.get('id')
 
-        if (len(top_15_id)<15):
-            top_15_id.append(song_id)
-            top_15_similarity.append(similarity)
-        else:
-            if similarity > min(top_15_similarity):
-                if(song_id not in top_15_id):
-                    index = top_15_similarity.index(min(top_15_similarity))
-                    top_15_similarity[index] = similarity
-                    top_15_id[index] = (song_id)
-                    #print(top_15_similarity)
+            if (len(top_15_id)<15):
+                top_15_id.append(song_id)
+                top_15_similarity.append(similarity)
+            else:
+                if similarity > min(top_15_similarity):
+                    if(song_id not in top_15_id):
+                        index = top_15_similarity.index(min(top_15_similarity))
+                        top_15_similarity[index] = similarity
+                        top_15_id[index] = (song_id)
+    
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
         print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
+    press_to_go_back(2)
 
 def reset_user():
     os.system('clear')
@@ -1682,7 +1553,7 @@ def recommend_new_releases_top_tracks():
     country = get_user_country()
     #new album releases:
     artists=[]
-    new_releases = spotify.new_releases(country)
+    new_releases = spotify.new_releases(country, limit=50)
     top_tracks = user_top_tracks()
     top_tracks2 = spotify.tracks(top_tracks)
    
@@ -1709,8 +1580,10 @@ def recommend_new_releases_top_tracks():
 
     for i in range(len(new_releases['albums'])):
         if(new_releases['albums']['items'][i]['artists'][0]['name'] in artists):
+            print"entrei aqui!"
             new_albums_artists.append(new_releases['albums']['items'][i]['artists'][0]['name'])
             new_albums_indexes.append(i)
+    print(artists)
 
     if(len(new_albums_artists) == 0):
             print"No new releases recommended! :("
