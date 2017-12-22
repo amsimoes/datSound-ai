@@ -115,7 +115,7 @@ def releases_menu():
 
 
 def print_loading():
-    print "^_^ Loading... ^o^"
+    print "... Loading ..."
 
 
 def get_artists_ids(artists_names):
@@ -138,7 +138,7 @@ def get_user_country():
     return str(me['country'])
 
 
-def print_events_in_country(artists_ids, user_country):
+def print_events_in_country(artists_ids, user_country, op):
     events_list = []
     for i in range(0, len(artists_ids)):
         url = 'http://api.songkick.com/api/3.0/artists/{a_id}/calendar.json?apikey={a}'.format(a=SONGKICK_API, a_id=artists_ids[i])
@@ -156,19 +156,26 @@ def print_events_in_country(artists_ids, user_country):
             pass
 
     os.system('clear')
+
+    if op == 1:
+        print "*** Events Recommended based on your Top Artists ***"
+    elif op == 2:
+        print "*** Events Recommended based on your Top Tracks' Artists ***"
+    elif op == 3:
+        print "*** Events Recommended based on your Recently Played Tracks' Artists ***"
+
     if not events_list:
         print "No events near you."
     else:
         for e in events_list:
             print e
-        return
 
 
-def get_artists_events(artists_names):
+def get_artists_events(artists_names, op):
     artists_ids = get_artists_ids(artists_names)
     user_country = get_user_country()
     
-    return print_events_in_country(artists_ids, user_country)
+    return print_events_in_country(artists_ids, user_country, op)
 
 
 def add_new_top_tracks_artists(top_tracks_artists, newer_tracks):
@@ -218,7 +225,7 @@ def events_top_artists():
 
     top_artists = get_all_artists(results_long, results_medium, results_short)
 
-    get_artists_events(top_artists)
+    get_artists_events(top_artists, 1)
 
     press_to_go_back(3)
 
@@ -234,8 +241,8 @@ def events_top_tracks():
     results_short = spotify.current_user_top_tracks(limit=top_tracks_limit, time_range='short_term')
 
     top_tracks_artists = get_tracks_artists(results_long, results_medium, results_short)
-    
-    get_artists_events(top_tracks_artists)
+
+    get_artists_events(top_tracks_artists, 2)
 
     press_to_go_back(3)
 
@@ -257,7 +264,7 @@ def events_recent_tracks():
 
     recent_tracks_artists = get_recent_tracks_artists(results)
 
-    get_artists_events(recent_tracks_artists)
+    get_artists_events(recent_tracks_artists, 3)
 
     press_to_go_back(3)
 
