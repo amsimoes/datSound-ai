@@ -1695,8 +1695,8 @@ def recommend_new_releases_top_tracks():
         if(top_tracks2['tracks'][i]['artists'][0]['name'] not in artists):
             artists.append(top_tracks2['tracks'][i]['artists'][0]['name'])
 
-    top_track_recommends = spotify.recommendations(seed_tracks=top_tracks, limit = 10)
-    top_artists_recommends = spotify.recommendations(seed_artists=top_artists, limit = 10)
+    top_track_recommends = spotify.recommendations(seed_tracks=top_tracks, limit = 50)
+    top_artists_recommends = spotify.recommendations(seed_artists=top_artists, limit = 50)
 
     for i in range(len(top_track_recommends['tracks'])):
         if(top_track_recommends['tracks'][i]['artists'][0]['name'] not in artists):
