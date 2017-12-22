@@ -6,7 +6,6 @@ import os
 import json
 import pprint
 import songkick
-import datetime
 import requests
 import math
 import time
