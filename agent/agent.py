@@ -9,6 +9,7 @@ import songkick
 import datetime
 import requests
 import math
+import time
 from collections import OrderedDict
 
 import spotipy.oauth2 as oauth2
@@ -52,7 +53,8 @@ def main_menu():
 
     print "1. Tracks"
     print "2. Events"
-    print "3. New_releases"
+    print "3. New Releases"
+    print "9. Reset User"
     print "0. Quit\n"
 
     choice = raw_input(">> ")
@@ -85,6 +87,7 @@ def events_menu():
     print "1. Based on Top Artists"
     print "2. Based on Top Tracks' Artists"
     print "3. Based on Recently Played Tracks' Artists"
+    print "8. Reset User"
     print "9. Back"
     print "0. Quit\n"
 
@@ -98,10 +101,14 @@ def releases_menu():
     print "NEW RELEASES RECOMMENDATIONS MENU\n"
 
     print "1. Based on Top Tracks"
+    print "8. Reset User"
+    print "9. Back"
+    print "0. Quit\n"
 
     choice = raw_input(">> ")
     exec_menu(choice, '4')
     return
+
 
 def get_artists_ids(artists_names):
     artists_ids = []
@@ -351,6 +358,7 @@ def user_recent_tracks():
     
     return generate_array_recent(results, limit)
 
+
 def recommend_top_tracks():
     os.system('clear')
 
@@ -499,7 +507,7 @@ def recommend_top_tracks():
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
-        print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
+        print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
 
     press_to_go_back(2)
 
@@ -648,7 +656,7 @@ def recommend_recent_tracks():
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
-        print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
+        print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
 
     press_to_go_back(2)
 
@@ -870,7 +878,7 @@ def recommend_top_artists():
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
-        print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
+        print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
 
     press_to_go_back(2)
 
@@ -1237,7 +1245,7 @@ def recommend_top_tracks_top_artists():
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
-        print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
+        print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
     press_to_go_back(2)
 
 def recommend_top_tracks_recent_tracks():
@@ -1531,8 +1539,9 @@ def recommend_top_tracks_recent_tracks():
     top_15_tracks = spotify.tracks(top_15_id)
 
     for i in range(0, len(top_15_id)):
-        print str(i+1) + "." + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
+        print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
     press_to_go_back(2)
+
 
 def reset_user():
     os.system('clear')
@@ -1547,8 +1556,13 @@ def reset_user():
     
     if flag:
         print "User(s) removed with success!"
+    
+    time.sleep(3)
+    
+
     press_to_go_back(1)
     
+
 def recommend_new_releases_top_tracks():
     country = get_user_country()
     #new album releases:
@@ -1579,23 +1593,24 @@ def recommend_new_releases_top_tracks():
     new_albums_indexes = []
 
     for i in range(len(new_releases['albums'])):
-        if(new_releases['albums']['items'][i]['artists'][0]['name'] in artists):
-            print"entrei aqui!"
+        if new_releases['albums']['items'][i]['artists'][0]['name'] in artists:
             new_albums_artists.append(new_releases['albums']['items'][i]['artists'][0]['name'])
             new_albums_indexes.append(i)
+
     print(artists)
 
-    if(len(new_albums_artists) == 0):
-            print"No new releases recommended! :("
+    if not new_albums_artists:
+            print "No new releases to recommend! :("
     else:
         for i in range(len(new_albums_artists)):
             print str(i+1) + ". " + new_releases['albums']['items'][new_albums_indexes[i]]['name'] + " - " + new_releases['albums']['items'][new_albums_indexes[i]]['artists'][0]['name']
 
-    press_to_go_back(1)
+    press_to_go_back(4)
     
 
 def recommend_new_releases_top_artists():
     pass
+
 
 def exec_menu(choice, menu_id):
     os.system('clear')
@@ -1660,7 +1675,6 @@ menu_actions = {
     '4': {
         'menu': releases_menu,
         '1': recommend_new_releases_top_tracks,
-        '2': recommend_new_releases_top_artists,
         '9': back,
         '0': exit,
     }
