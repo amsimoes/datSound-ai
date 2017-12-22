@@ -60,7 +60,7 @@ def main_menu():
 
     print "1. Tracks"
     print "2. Events"
-    print "3. New Releases"
+    print "3. New Releases\n"
     print "9. Reset User"
     print "0. Quit\n"
 
