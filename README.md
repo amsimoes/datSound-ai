@@ -8,7 +8,7 @@ Tracks, Events and New Releases (Albums) are recommended based on User's Spotify
 
 It's a CLI application and all we used was Python (2.7 version).
 
-Apart from Python 2.7 being required to run, its' dependencies can be met by doing the following command:
+Apart from Python 2.7 being required to run, app dependencies can be met by doing the following command:
 
 `$ pip install -r requirements.txt`
 
