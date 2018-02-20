@@ -77,7 +77,7 @@ def recommendations_menu():
     print "2. Based on User's Top Artists"
     print "3. Based on User's Recently Played Tracks"
     print "4. Based on User's Top Tracks and Artists"
-    print "5. Based on Users's Top Tracks and Recently Played Tracks\n"
+    print "5. Based on User's Top Tracks and Recently Played Tracks\n"
     print "9. Back"
     print "0. Quit\n"
 
