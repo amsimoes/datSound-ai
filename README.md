@@ -3,6 +3,8 @@
 Music Recommender System based on Spotify's API and AI techniques.
 Project done for MSc - AI course.
 
+Authors: [António Simões](https://github.com/amsimoes) & [Igor Rodrigues](https://github.com/ElRoggo)
+
 Tracks, Events and New Releases (Albums) are recommended based on User's Spotify history.
 
 # Installation
