@@ -158,11 +158,11 @@ def print_events_in_country(artists_ids, user_country, op):
     os.system('clear')
 
     if op == 1:
-        print "*** Events Recommended based on your Top Artists ***"
+        print "*** Events Recommendations based on your Top Artists ***"
     elif op == 2:
-        print "*** Events Recommended based on your Top Tracks' Artists ***"
+        print "*** Events Recommendations based on your Top Tracks' Artists ***"
     elif op == 3:
-        print "*** Events Recommended based on your Recently Played Tracks' Artists ***"
+        print "*** Events Recommendations based on your Recently Played Tracks' Artists ***"
 
     if not events_list:
         print "No events near you."
@@ -528,7 +528,7 @@ def recommend_top_tracks():
 
     os.system('clear')
 
-    print "*** Tracks Recommended based on your Top Tracks ***"
+    print "*** Tracks Recommendations based on your Top Tracks ***"
 
     for i in range(0, len(top_15_id)):
         print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
@@ -686,7 +686,7 @@ def recommend_recent_tracks():
 
     os.system('clear')
 
-    print "*** Tracks Recommended based on your Recently Played Tracks ***"
+    print "*** Tracks Recommendations based on your Recently Played Tracks ***"
 
     for i in range(0, len(top_15_id)):
         print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
@@ -914,7 +914,7 @@ def recommend_top_artists():
 
     os.system('clear')
 
-    print "*** Tracks Recommended based on your Top Artists ***"
+    print "*** Tracks Recommendations based on your Top Artists ***"
 
     for i in range(0, len(top_15_id)):
         print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
@@ -1290,7 +1290,7 @@ def recommend_top_tracks_top_artists():
 
     os.system('clear')
 
-    print "*** Tracks Recommended based on the Top Tracks of your Top Artists ***"
+    print "*** Tracks Recommendations based on the Top Tracks of your Top Artists ***"
 
     for i in range(0, len(top_15_id)):
         print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
@@ -1590,7 +1590,7 @@ def recommend_top_tracks_recent_tracks():
 
     os.system('clear')
 
-    print "*** Tracks Recommended based on your Recently Played Tracks and your Top Tracks ***"
+    print "*** Tracks Recommendations based on your Recently Played Tracks and your Top Tracks ***"
 
     for i in range(0, len(top_15_id)):
         print str(i+1) + ". " + top_15_tracks['tracks'][i]['artists'][0]['name'] + " - " + top_15_tracks['tracks'][i]['name']
@@ -1656,6 +1656,7 @@ def recommend_new_releases_top_tracks():
     # print(artists)
 
     os.system('clear')
+    print "*** New Releases Recommendations based on your Top Tracks ***"
 
     if not new_albums_artists:
             print "No new releases to recommend! :("
