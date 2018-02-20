@@ -12,7 +12,8 @@ It's a CLI application and all we used was Python (2.7 version).
 Apart from Python 2.7 being required to run, app dependencies can be met by doing the following command:
 
 ```
-$ pip install -r requirements.txt
+$ cd agent
+# pip install -r requirements.txt
 ```
 
 # Running
